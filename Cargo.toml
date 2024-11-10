@@ -1,0 +1,17 @@
+[package]
+name = "into_controlflow"
+description = ""
+authors = ["Michał Trybus <komar007@gmail.com>"]
+license = "MIT OR Apache-2.0"
+
+repository = ""
+readme = "README.md"
+documentation = ""
+
+categories = []
+keywords = []
+
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
