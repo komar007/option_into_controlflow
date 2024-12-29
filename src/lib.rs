@@ -2,30 +2,50 @@ use std::ops::ControlFlow;
 
 pub trait OptionExt {
     type Item;
-    fn continue_or<B>(self, b: B) -> ControlFlow<B, Self::Item>;
+
     fn continue_or_else<B, F>(self, b: F) -> ControlFlow<B, Self::Item>
     where
         F: FnOnce() -> B;
-    fn continue_or_default<B>(self) -> ControlFlow<B, Self::Item>
-    where
-        B: Default;
-    fn break_or<C>(self, c: C) -> ControlFlow<Self::Item, C>;
+
     fn break_or_else<C, F>(self, c: F) -> ControlFlow<Self::Item, C>
     where
         F: FnOnce() -> C;
+
+    fn continue_or<B>(self, b: B) -> ControlFlow<B, Self::Item>
+    where
+        Self: Sized,
+    {
+        self.continue_or_else(|| b)
+    }
+
+    fn continue_or_default<B>(self) -> ControlFlow<B, Self::Item>
+    where
+        Self: Sized,
+        B: Default,
+    {
+        self.continue_or_else(Default::default)
+    }
+
+    fn break_or<C>(self, c: C) -> ControlFlow<Self::Item, C>
+    where
+        Self: Sized,
+    {
+        self.break_or_else(|| c)
+    }
+
     fn break_or_default<C>(self) -> ControlFlow<Self::Item, C>
     where
-        C: Default;
+        Self: Sized,
+        C: Default,
+    {
+        self.break_or_else(Default::default)
+    }
 }
 
 impl<T> OptionExt for Option<T> {
     type Item = T;
 
-    fn continue_or<B>(self, b: B) -> ControlFlow<B, Self::Item> {
-        self.continue_or_else(|| b)
-    }
-
-    fn continue_or_else<B, F>(self, b: F) -> ControlFlow<B, Self::Item>
+    fn continue_or_else<B, F>(self, b: F) -> ControlFlow<B, T>
     where
         F: FnOnce() -> B,
     {
@@ -35,18 +55,7 @@ impl<T> OptionExt for Option<T> {
         }
     }
 
-    fn continue_or_default<B>(self) -> ControlFlow<B, Self::Item>
-    where
-        B: Default,
-    {
-        self.continue_or_else(Default::default)
-    }
-
-    fn break_or<C>(self, c: C) -> ControlFlow<Self::Item, C> {
-        self.break_or_else(|| c)
-    }
-
-    fn break_or_else<C, F>(self, c: F) -> ControlFlow<Self::Item, C>
+    fn break_or_else<C, F>(self, c: F) -> ControlFlow<T, C>
     where
         F: FnOnce() -> C,
     {
@@ -54,13 +63,6 @@ impl<T> OptionExt for Option<T> {
             Some(v) => ControlFlow::Break(v),
             None => ControlFlow::Continue(c()),
         }
-    }
-
-    fn break_or_default<C>(self) -> ControlFlow<Self::Item, C>
-    where
-        C: Default,
-    {
-        self.break_or_else(Default::default)
     }
 }
 
