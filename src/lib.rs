@@ -6,10 +6,16 @@ pub trait OptionExt {
     fn continue_or_else<B, F>(self, b: F) -> ControlFlow<B, Self::Item>
     where
         F: FnOnce() -> B;
+    fn continue_or_default<B>(self) -> ControlFlow<B, Self::Item>
+    where
+        B: Default;
     fn break_or<C>(self, c: C) -> ControlFlow<Self::Item, C>;
     fn break_or_else<C, F>(self, c: F) -> ControlFlow<Self::Item, C>
     where
         F: FnOnce() -> C;
+    fn break_or_default<C>(self) -> ControlFlow<Self::Item, C>
+    where
+        C: Default;
 }
 
 impl<T> OptionExt for Option<T> {
@@ -29,6 +35,13 @@ impl<T> OptionExt for Option<T> {
         }
     }
 
+    fn continue_or_default<B>(self) -> ControlFlow<B, Self::Item>
+    where
+        B: Default,
+    {
+        self.continue_or_else(Default::default)
+    }
+
     fn break_or<C>(self, c: C) -> ControlFlow<Self::Item, C> {
         self.break_or_else(|| c)
     }
@@ -41,6 +54,13 @@ impl<T> OptionExt for Option<T> {
             Some(v) => ControlFlow::Break(v),
             None => ControlFlow::Continue(c()),
         }
+    }
+
+    fn break_or_default<C>(self) -> ControlFlow<Self::Item, C>
+    where
+        C: Default,
+    {
+        self.break_or_else(Default::default)
     }
 }
 
@@ -86,5 +106,16 @@ mod tests {
         assert!(!called);
 
         assert_eq!(None::<i32>.break_or_else(|| 2), ControlFlow::Continue(2));
+    }
+
+    #[test]
+    fn test_default() {
+        assert_eq!(
+            Some(1).continue_or_default::<()>(),
+            ControlFlow::Continue(1)
+        );
+        assert_eq!(None::<i32>.continue_or_default(), ControlFlow::Break(0));
+        assert_eq!(Some(1).break_or_default::<()>(), ControlFlow::Break(1));
+        assert_eq!(None::<i32>.break_or_default(), ControlFlow::Continue(0));
     }
 }
