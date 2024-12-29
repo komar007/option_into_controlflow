@@ -1,16 +1,30 @@
 use std::ops::ControlFlow;
 
 pub trait OptionExt {
+    /// The output value
     type Item;
 
+    /// Transforms the output value into a [`Continue`] if present, or produces a [`Break(b())`]
+    /// otherwise.
+    ///
+    /// [`Continue`]: ControlFlow::Continue
+    /// [`Break(b())`]: ControlFlow::Break
     fn continue_or_else<B, F>(self, b: F) -> ControlFlow<B, Self::Item>
     where
         F: FnOnce() -> B;
 
+    /// Transforms the output value into a [`Break`] if present, or produces a [`Continue(c())`]
+    /// otherwise.
+    ///
+    /// [`Break`]: ControlFlow::Break
+    /// [`Continue(c())`]: ControlFlow::Continue
     fn break_or_else<C, F>(self, c: F) -> ControlFlow<Self::Item, C>
     where
         F: FnOnce() -> C;
 
+    /// Non-lazy version of [`continue_or_else`].
+    ///
+    /// [`continue_or_else`]: OptionExt::continue_or_else
     fn continue_or<B>(self, b: B) -> ControlFlow<B, Self::Item>
     where
         Self: Sized,
@@ -18,6 +32,9 @@ pub trait OptionExt {
         self.continue_or_else(|| b)
     }
 
+    /// Default-value version of [`continue_or_else`].
+    ///
+    /// [`continue_or_else`]: OptionExt::continue_or_else
     fn continue_or_default<B>(self) -> ControlFlow<B, Self::Item>
     where
         Self: Sized,
@@ -26,6 +43,9 @@ pub trait OptionExt {
         self.continue_or_else(Default::default)
     }
 
+    /// Non-lazy version of [`break_or_else`].
+    ///
+    /// [`break_or_else`]: OptionExt::break_or_else
     fn break_or<C>(self, c: C) -> ControlFlow<Self::Item, C>
     where
         Self: Sized,
@@ -33,6 +53,9 @@ pub trait OptionExt {
         self.break_or_else(|| c)
     }
 
+    /// Default-value version of [`break_or_else`].
+    ///
+    /// [`break_or_else`]: OptionExt::break_or_else
     fn break_or_default<C>(self) -> ControlFlow<Self::Item, C>
     where
         Self: Sized,
@@ -45,6 +68,25 @@ pub trait OptionExt {
 impl<T> OptionExt for Option<T> {
     type Item = T;
 
+    /// Transforms the [`Option<T>`] into a [`ControlFlow<B, T>`], mapping [`Some(v)`] to
+    /// [`Continue(v)`] and [`None`] to [`Break(b())`].
+    ///
+    /// [`Continue(v)`]: ControlFlow::Continue
+    /// [`Break(b())`]: ControlFlow::Break
+    /// [`Some(v)`]: Some
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::ops::ControlFlow;
+    /// use into_controlflow::OptionExt as _;
+    ///
+    /// let x = Some("foo");
+    /// assert_eq!(x.continue_or_else(|| 0), ControlFlow::Continue("foo"));
+    ///
+    /// let x: Option<&str> = None;
+    /// assert_eq!(x.continue_or_else(|| 0), ControlFlow::Break(0));
+    /// ```
     fn continue_or_else<B, F>(self, b: F) -> ControlFlow<B, T>
     where
         F: FnOnce() -> B,
@@ -55,6 +97,25 @@ impl<T> OptionExt for Option<T> {
         }
     }
 
+    /// Transforms the [`Option<T>`] into a [`ControlFlow<T, C>`], mapping [`Some(v)`] to
+    /// [`Break(v)`] and [`None`] to [`Continue(c())`].
+    ///
+    /// [`Continue(c())`]: ControlFlow::Continue
+    /// [`Break(v)`]: ControlFlow::Break
+    /// [`Some(v)`]: Some
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::ops::ControlFlow;
+    /// use into_controlflow::OptionExt as _;
+    ///
+    /// let x = Some("foo");
+    /// assert_eq!(x.break_or_else(|| 0), ControlFlow::Break("foo"));
+    ///
+    /// let x: Option<&str> = None;
+    /// assert_eq!(x.break_or_else(|| 0), ControlFlow::Continue(0));
+    /// ```
     fn break_or_else<C, F>(self, c: F) -> ControlFlow<T, C>
     where
         F: FnOnce() -> C,
