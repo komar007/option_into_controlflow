@@ -1,6 +1,6 @@
 use std::ops::ControlFlow;
 
-pub trait IntoControlFlow {
+pub trait OptionExt {
     type Item;
     fn continue_or<B>(self, b: B) -> ControlFlow<B, Self::Item>;
     fn continue_or_else<B, F>(self, b: F) -> ControlFlow<B, Self::Item>
@@ -12,7 +12,7 @@ pub trait IntoControlFlow {
         F: FnOnce() -> C;
 }
 
-impl<T> IntoControlFlow for Option<T> {
+impl<T> OptionExt for Option<T> {
     type Item = T;
 
     fn continue_or<B>(self, b: B) -> ControlFlow<B, Self::Item> {
@@ -48,7 +48,7 @@ impl<T> IntoControlFlow for Option<T> {
 mod tests {
     use std::ops::ControlFlow;
 
-    use crate::IntoControlFlow;
+    use crate::OptionExt as _;
 
     #[test]
     fn test_value() {
