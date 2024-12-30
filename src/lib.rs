@@ -1,3 +1,14 @@
+//! An extension trait for [`Option<T>`] which provides conversion to [`ControlFlow`].
+//!
+//! The naming conventions are derived from [`Option::ok_or`] and [`Option::ok_or_else`] but
+//! extended to cover conversions:
+//! - from [`Some`] to both [`Continue`] and [`Break`], and
+//! - from [`None`] to default value (which would make little sense for [`Error`]).
+//!
+//! [`Continue`]: ControlFlow::Continue
+//! [`Break`]: ControlFlow::Break
+//! [`Error`]: std::error::Error
+
 use std::ops::ControlFlow;
 
 pub trait OptionExt {
