@@ -7,7 +7,7 @@ use tokio::{
     time,
 };
 
-use into_controlflow::OptionExt as _;
+use option_into_controlflow::OptionExt as _;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {

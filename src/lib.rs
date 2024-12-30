@@ -9,7 +9,9 @@
 //! [`Break`]: ControlFlow::Break
 //! [`Error`]: std::error::Error
 
-use std::ops::ControlFlow;
+#![no_std]
+
+use core::ops::ControlFlow;
 
 pub trait OptionExt {
     /// The type wrapped by [`Option`]
@@ -25,8 +27,8 @@ pub trait OptionExt {
     /// # Examples
     ///
     /// ```
-    /// # use std::ops::ControlFlow;
-    /// use into_controlflow::OptionExt as _;
+    /// # use core::ops::ControlFlow;
+    /// use option_into_controlflow::OptionExt as _;
     ///
     /// let x = Some("foo");
     /// assert_eq!(x.continue_or_else(|| 0), ControlFlow::Continue("foo"));
@@ -48,8 +50,8 @@ pub trait OptionExt {
     /// # Examples
     ///
     /// ```
-    /// # use std::ops::ControlFlow;
-    /// use into_controlflow::OptionExt as _;
+    /// # use core::ops::ControlFlow;
+    /// use option_into_controlflow::OptionExt as _;
     ///
     /// let x = Some("foo");
     /// assert_eq!(x.break_or_else(|| 0), ControlFlow::Break("foo"));
@@ -74,8 +76,8 @@ pub trait OptionExt {
     /// # Examples
     ///
     /// ```
-    /// # use std::ops::ControlFlow;
-    /// use into_controlflow::OptionExt as _;
+    /// # use core::ops::ControlFlow;
+    /// use option_into_controlflow::OptionExt as _;
     ///
     /// let x = Some("foo");
     /// assert_eq!(x.continue_or(0), ControlFlow::Continue("foo"));
@@ -99,8 +101,8 @@ pub trait OptionExt {
     /// # Examples
     ///
     /// ```
-    /// # use std::ops::ControlFlow;
-    /// use into_controlflow::OptionExt as _;
+    /// # use core::ops::ControlFlow;
+    /// use option_into_controlflow::OptionExt as _;
     ///
     /// let x = Some("foo");
     /// let y: ControlFlow<i32, _> = x.continue_or_default();
@@ -130,8 +132,8 @@ pub trait OptionExt {
     /// # Examples
     ///
     /// ```
-    /// # use std::ops::ControlFlow;
-    /// use into_controlflow::OptionExt as _;
+    /// # use core::ops::ControlFlow;
+    /// use option_into_controlflow::OptionExt as _;
     ///
     /// let x = Some("foo");
     /// assert_eq!(x.break_or(0), ControlFlow::Break("foo"));
@@ -155,8 +157,8 @@ pub trait OptionExt {
     /// # Examples
     ///
     /// ```
-    /// # use std::ops::ControlFlow;
-    /// use into_controlflow::OptionExt as _;
+    /// # use core::ops::ControlFlow;
+    /// use option_into_controlflow::OptionExt as _;
     ///
     /// let x = Some("foo");
     /// let y: ControlFlow<_, i32> = x.break_or_default();
@@ -200,7 +202,7 @@ impl<T> OptionExt for Option<T> {
 
 #[cfg(test)]
 mod tests {
-    use std::ops::ControlFlow;
+    use core::ops::ControlFlow;
 
     use crate::OptionExt as _;
 
