@@ -6,27 +6,38 @@ use tokio::{
     sync::mpsc,
     time,
 };
+use tokio_util::sync::CancellationToken;
 
 use option_into_controlflow::OptionExt as _;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let mut cancel = signal(SignalKind::hangup())?;
-    let mut msgs = messages();
+    let token = CancellationToken::new();
+    let process = process_messages(messages(), token.child_token());
 
+    let mut hangup = signal(SignalKind::hangup())?;
+    tokio::spawn(async move {
+        hangup.recv().await.unwrap();
+        token.cancel();
+    });
+
+    process.await;
+    Ok(())
+}
+
+async fn process_messages(mut msgs: mpsc::Receiver<i32>, token: CancellationToken) {
     while let ControlFlow::Continue(msg) = select! { biased;
-        _ = cancel.recv() => ControlFlow::Break(()),
-        m = msgs.recv() => m.continue_or(())
+        _ = token.cancelled() => ControlFlow::Break(()),
+        m = msgs.recv() => m.continue_or(()),
     } {
         println!("msg = {}", msg)
     }
-    Ok(())
 }
 
 fn messages() -> mpsc::Receiver<i32> {
     let (tx, rx) = mpsc::channel(1);
     tokio::spawn(async move {
-        for i in 0..10 {
+        for i in 0..5 {
             time::sleep(Duration::from_secs(1)).await;
             let _ = tx.send(i).await;
         }
