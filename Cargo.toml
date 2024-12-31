@@ -1,3 +1,9 @@
+[workspace]
+members = [
+    "examples/select",
+    ".",
+]
+
 [package]
 name = "option_into_controlflow"
 description = "Option into ControlFlow conversion"
@@ -13,7 +19,3 @@ keywords = ["option", "control-flow", "conversion"]
 
 version = "1.0.0"
 edition = "2021"
-
-[dev-dependencies]
-tokio = { version = "1.41", features = ["rt-multi-thread", "sync", "macros", "time", "signal"] }
-tokio-util = "0.7"

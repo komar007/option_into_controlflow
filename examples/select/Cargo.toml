@@ -1,0 +1,14 @@
+[package]
+name = "example_select"
+description = "option_into_controlflow readme example"
+authors = ["Michał Trybus <komar007@gmail.com>"]
+license = "MIT OR Apache-2.0"
+publish = false
+
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+option_into_controlflow = { path = "../.." }
+tokio = { version = "1.41", features = ["rt-multi-thread", "sync", "macros", "time", "signal"] }
+tokio-util = "0.7"
