@@ -6,7 +6,7 @@ license = "MIT OR Apache-2.0"
 publish = false
 
 version = "1.0.0"
-edition = "2021"
+edition = "2018"
 
 [dependencies]
 option_into_controlflow = { path = "../.." }
