@@ -1,8 +1,13 @@
-# `option_into_controlflow` - `Option` into `ControlFlow` conversion
+# `option_into_controlflow`
+
+![Crates.io License](https://img.shields.io/crates/l/option_into_controlflow)
+[![Crates.io Version](https://img.shields.io/crates/v/option_into_controlflow)](https://crates.io/crates/option_into_controlflow/)
+![GitHub branch check runs](https://img.shields.io/github/check-runs/komar007/option_into_controlflow/main)
+[![docs.rs](https://img.shields.io/docsrs/option_into_controlflow)](https://docs.rs/option_into_controlflow)
 
 Convert `Option<T>` into `ControlFlow<T, _>` or `ControlFlow<_, T>`.
 
-## Usage
+## Overview
 
 Analogically to `ok_or` and `ok_or_else` for converting into `Result`, this crate introduces:
 - `break_or`/`continue_or`,
