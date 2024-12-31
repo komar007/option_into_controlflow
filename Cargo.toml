@@ -19,7 +19,6 @@ keywords = ["option", "control-flow", "conversion"]
 
 version = "1.0.0"
 edition = "2018"
-rust-version = "1.55.0"
 
 [package.metadata]
 msrv = "1.55.0"
